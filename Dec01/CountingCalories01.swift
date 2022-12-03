@@ -25,7 +25,7 @@ func CountCalories(inputs: [String]) -> [Elf] {
     var calories: Int = 0 
     var currentID: Int = 1
     for input in inputs {
-       if input == "" { // Note, at the end of the input, there is an empty line indicating eof. No need to create a new elf
+       if input == "" {
             elves.append(Elf(id: currentID, calories: calories))
             calories = 0
             currentID += 1
@@ -33,8 +33,9 @@ func CountCalories(inputs: [String]) -> [Elf] {
         }
         calories += stringToInt(input)
     }
+    // Note: string in last index is an empty string, no need to add the last elf.
     elves = elves.sorted(by: {
-        $0.calories > $1.calories // Sorts by ascending 
+        $0.calories > $1.calories // Sorts by ascending order.
     })
     return elves
 }
