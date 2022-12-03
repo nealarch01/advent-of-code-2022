@@ -13,9 +13,9 @@ Y: Paper
 Z: Scissors
 
 Self (Part 2):
-X: Win
+X: Lose
 Y: Draw
-Z: Lose
+Z: Win
 
 Points for round
 Rock: 1
