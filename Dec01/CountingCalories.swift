@@ -35,7 +35,7 @@ func CountCalories(inputs: [String]) -> [Elf] {
     }
     // Note: string in last index is an empty string, no need to add the last elf.
     elves = elves.sorted(by: {
-        $0.calories > $1.calories // Sorts by ascending order.
+        $0.calories > $1.calories // Sorts by descending (highest to lowest) order.
     })
     return elves
 }

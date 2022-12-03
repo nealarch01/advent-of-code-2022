@@ -92,7 +92,6 @@ func evaluateRoundP2(_ opponent: Character, _ pick: Character) -> Int {
     }
 }
 
-// Part One
 func calculateScore(rounds: [String]) -> (partOne: Int, partTwo: Int) {
     var scoreP1: Int = 0
     var scoreP2: Int = 0
