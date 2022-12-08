@@ -1,6 +1,41 @@
 import Foundation
 import Darwin 
 
+class ElfGroup {
+    private(set) var groupNumber: Int
+    private(set) var rucksacks: [String]
+
+    init(groupNumber: Int, rucksacks: [String]) {
+        self.groupNumber = groupNumber
+        self.rucksacks = rucksacks
+    }
+    
+    private func mapCharacters(_ rucksack: String, _ characterMap: inout [Character:Int]) {
+        var localMap: [Character:Int] = [:]
+        for item in rucksack {
+            if localMap[item] == nil { // If it is the first time we have visited
+                if characterMap[item] == nil { // This does not exist
+                    characterMap[item] = 1 // Set first instance
+                } else { // Already exists, in a previous rucksack, so increment
+                    characterMap[item]! += 1
+                }
+                localMap[item] = 1 // Set first instance
+            }
+        }
+    }
+
+    func groupPriority(_ priorityMap: inout [Character:Int]) -> Int {
+        var characterMap: [Character: Int] = [:]
+        for rucksack in rucksacks {
+            mapCharacters(rucksack, &characterMap)
+        }
+        let sortedMap = characterMap.sorted { $0.value > $1.value }
+        let top = sortedMap[0].key
+        return priorityMap[top]!
+    }
+    
+}
+
 func initPriorityMap() -> [Character: Int] {
     var priorityMap: [Character: Int] = [:]
     var currentLowerChar: Character = "a"
@@ -29,7 +64,7 @@ func splitCompartments(_ rucksack: String) -> (left: String.SubSequence, right: 
 }
 
 
-func calculatePriority(rucksack: String, _ priorityMap: [Character:Int]) -> Int {
+func calculatePriority(_ rucksack: String, _ priorityMap: inout [Character:Int]) -> Int {
     let compartments = splitCompartments(rucksack)
     // Get the intersection of left and right compartments
     var leftMap: [Character: Int] = [:]
@@ -42,6 +77,20 @@ func calculatePriority(rucksack: String, _ priorityMap: [Character:Int]) -> Int 
         }
     }
     return 0
+}
+
+
+func getElfGroups(_ rucksacks: [String]) -> [ElfGroup] {
+    var elfGroups: [ElfGroup] = []
+    var threeRucksacks: [String] = []
+    for (index, rucksack) in rucksacks.enumerated() {
+        threeRucksacks.append(rucksack)
+        if (index + 1) % 3 == 0 {
+            elfGroups.append(ElfGroup(groupNumber: elfGroups.count + 1, rucksacks: threeRucksacks))
+            threeRucksacks = []
+        }
+    }
+    return elfGroups
 }
 
 func main() {
@@ -61,12 +110,18 @@ func main() {
     
     // Code here
     let rucksacks: [String] = contents.components(separatedBy: "\n")
-    let priorityMap = initPriorityMap()
+    var priorityMap = initPriorityMap()
     var priority: Int = 0
     for rucksack in rucksacks {
-        priority += calculatePriority(rucksack: rucksack, priorityMap)
+        priority += calculatePriority(rucksack, &priorityMap)
     }
-    print(priority)
+    print("The priority is: \(priority)")
+    let elfGroups = getElfGroups(rucksacks)
+    var sumOfPriorities: Int = 0
+    for elfGroup in elfGroups {
+        sumOfPriorities += elfGroup.groupPriority(&priorityMap)
+    }
+    print("The sum of priorities is: \(sumOfPriorities)")
     exit(0)
 }
 
