@@ -7,7 +7,20 @@ func getValues(section: String) -> (start: Int, end: Int) {
     return (Int(values[0])!, Int(values[1])!)
 }
 
-func findOverlap(pair: [String]) -> Bool {
+// Part 2 function 
+func findPartialOverlap(pair: [String]) -> Bool {
+    let firstSection = getValues(section: pair[0])
+    let secondSection = getValues(section: pair[1])
+    let condition1 = firstSection.end >= secondSection.start
+    let condition2 = secondSection.end >= firstSection.start
+    if firstSection.start < secondSection.start {
+        return condition1
+    }
+    return condition2
+}
+
+// Part 1 function
+func findFullOverlap(pair: [String]) -> Bool {
     let firstSection = getValues(section: pair[0])
     let secondSection = getValues(section: pair[1])
     // Condition for overlap:
@@ -38,15 +51,24 @@ func main() {
     // Split the contents
     var pairs = contents.components(separatedBy:"\n")
     pairs.removeLast()
-    var overlapCount = 0
+    var fullOverlapCount = 0
+    var partialOverlapCount = 0
     for pair in pairs {
         let formattedPair = pair.components(separatedBy: ",")
-        if findOverlap(pair: formattedPair) {
-            overlapCount += 1
+        if findFullOverlap(pair: formattedPair) {
+            fullOverlapCount += 1
+            partialOverlapCount += 1
+            print("\(formattedPair)")
+            continue
+        }
+        if findPartialOverlap(pair: formattedPair) {
+            print("\(formattedPair)")
+            partialOverlapCount += 1
         }
     }
 
-    print("There are \(overlapCount) overlapping sections")
+    print("There are \(fullOverlapCount) fully overlapped sections")
+    print("There are \(partialOverlapCount) fully and partially overlapped sections")
 }
 
 main()
