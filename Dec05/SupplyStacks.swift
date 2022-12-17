@@ -5,11 +5,15 @@ import Darwin
 struct SupplyStack {
     private(set) var items: [String]
 
-    mutating func push(item: String) {
+    mutating func pushBack(item: String) {
         items.append(item)
     }
 
-    mutating func pop() -> String {
+    mutating func pushFront(item: String) {
+        items.insert(item, at: 0)
+    }
+
+    mutating func popBack() -> String {
         return items.removeLast()
     }
 
@@ -19,12 +23,6 @@ struct SupplyStack {
         }
         return false
     }
-
-
-    mutating func reverse() {
-        items.reverse()
-    }
-
 
     init() {
         items = [] // Initialize an empty array
@@ -39,7 +37,7 @@ func display(supplyStacks: [SupplyStack]) {
     print("==================")
 }
 
-func rearrange(instruction: String, supplyStacks: inout [SupplyStack]) -> Void {
+func crateMover9000(instruction: String, supplyStacks: inout [SupplyStack]) -> Void {
     // Instruction format: "move 1 from 2 to 1"
     // print("Instruction: \(instruction)")
     let instructionArray = instruction.components(separatedBy: " ")
@@ -47,9 +45,23 @@ func rearrange(instruction: String, supplyStacks: inout [SupplyStack]) -> Void {
     let fromStack = Int(instructionArray[3])!
     let toStack = Int(instructionArray[5])!
     for _ in 0..<quantity {
-        supplyStacks[toStack - 1].push(item: supplyStacks[fromStack - 1].pop())
+        supplyStacks[toStack - 1].pushBack(item: supplyStacks[fromStack - 1].popBack())
     }
     // display(supplyStacks: supplyStacks)
+}
+
+func crateMover9001(instruction: String, supplyStacks: inout [SupplyStack]) -> Void {
+    let instructionArray = instruction.components(separatedBy: " ")
+    let quantity = Int(instructionArray[1])!
+    let fromStack = Int(instructionArray[3])!
+    let toStack = Int(instructionArray[5])!
+    var tempStack = SupplyStack()
+    for _ in 0..<quantity {
+        tempStack.pushBack(item: supplyStacks[fromStack - 1].popBack())
+    }
+    while !tempStack.isEmpty() {
+        supplyStacks[toStack - 1].pushBack(item: tempStack.popBack())
+    }
 }
 
 func main() {
@@ -87,7 +99,8 @@ func main() {
 
     let stackNumbers = stackMap[stackMap.count - 1] // Separate the numbers into an array
     stackMap.removeLast()
-    var supplyStacks: [SupplyStack] = []
+    var supplyStacks9000: [SupplyStack] = []
+    var supplyStacks9001: [SupplyStack] = []
     for (index, element) in stackNumbers.enumerated() {
         if element == " " {
             continue
@@ -97,27 +110,34 @@ func main() {
             if crate[index] == " " {
                 continue
             }
-            supplyStack.push(item: crate[index])
+            supplyStack.pushFront(item: crate[index])
         }
-        supplyStack.reverse()
-        supplyStacks.append(supplyStack)
+        supplyStacks9000.append(supplyStack)
+        supplyStacks9001.append(supplyStack)
     }
     // display(supplyStacks: supplyStacks)
     // Continue iterating through lines starting at i + 1
     for j in i + 1..<lines.count {
-        rearrange(instruction: lines[j], supplyStacks: &supplyStacks)
+        crateMover9000(instruction: lines[j], supplyStacks: &supplyStacks9000)
+        crateMover9001(instruction: lines[j], supplyStacks: &supplyStacks9001)
     }
 
-    display(supplyStacks: supplyStacks)
-
+    // display(supplyStacks: supplyStacks)
 
     // Print the elements at the top of all stacks
-    var combinedStr: String = ""
-    for (index, stack) in supplyStacks.enumerated() {
-        print("Stack \(index + 1): \(stack.items.last!)")
-        combinedStr += stack.items.last!
+    var result9000: String = "Using crate mover 9000: "
+    var result9001: String = "Using crate mover 9001: "
+    for (_, stack) in supplyStacks9000.enumerated() {
+        // print("Stack \(index + 1): \(stack.items.last!)")
+        result9000 += stack.items.last!
     }
-    print(combinedStr)
+
+    for (_, stack) in supplyStacks9001.enumerated() {
+        // print("Stack \(index + 1): \(stack.items.last!)")
+        result9001 += stack.items.last!
+    }
+    print(result9000)
+    print(result9001)
 }
 
 main()
