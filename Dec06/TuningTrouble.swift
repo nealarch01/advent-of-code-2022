@@ -52,6 +52,7 @@ func main() {
     // Since we already have the first four, start at index 4
     for i in 4..<contents.count {
         let char = contents[contents.index(contents.startIndex, offsetBy: i)]
+        charMap[fourArray[0]] = nil
         fourArray.removeFirst()
         fourArray.append(char)
         var charMap: [Character:Int] = [:]
