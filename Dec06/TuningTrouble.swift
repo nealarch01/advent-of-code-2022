@@ -19,61 +19,30 @@ func charArrayToString(charArray: [Character]) -> String {
     return string
 }
 
-func messageMarker4(dataStream: String) -> Int {
-    var fourArray: [Character] = []
+func findMessageMarker(dataStream: String, markCount: Int) -> Int {
+    var markerArray: [Character] = []
 
-    for i in 0..<4{
+    for i in 0..<markCount{
         let char = dataStream[dataStream.index(dataStream.startIndex, offsetBy: i)]
-        fourArray.append(char)
+        markerArray.append(char)
     }
 
     var charMap: [Character:Int] = [:]
 
-    if isUnique(charMap: &charMap, charArray: fourArray) {
-        print("Unique: \(fourArray)")
-        exit(0)
-    }
-
-    // Since we already have the first four, start at index 4
-    for i in 4..<dataStream.count {
-        let char = dataStream[dataStream.index(dataStream.startIndex, offsetBy: i)]
-        charMap[fourArray[0]] = nil
-        fourArray.removeFirst()
-        fourArray.append(char)
-        var charMap: [Character:Int] = [:]
-        if isUnique(charMap: &charMap, charArray: fourArray) {
-            print("Marker: \(charArrayToString(charArray: fourArray))")
-            print(i + 1)
-            return i + 1
-        }
-    }
-    return 0
-}
-
-func messageMarker14(dataStream: String) -> Int {
-    var fourteenArray: [Character] = []
-
-    for i in 0..<14{
-        let char = dataStream[dataStream.index(dataStream.startIndex, offsetBy: i)]
-        fourteenArray.append(char)
-    }
-
-    var charMap: [Character:Int] = [:]
-
-    if isUnique(charMap: &charMap, charArray: fourteenArray) {
-        print("Unique: \(fourteenArray)")
+    if isUnique(charMap: &charMap, charArray: markerArray) {
+        print("Unique: \(markerArray)")
         exit(0)
     }
 
     // Since we already have the first fourteen, start at index 14
-    for i in 14..<dataStream.count {
+    for i in markCount..<dataStream.count {
         let char = dataStream[dataStream.index(dataStream.startIndex, offsetBy: i)]
-        charMap[fourteenArray[0]] = nil
-        fourteenArray.removeFirst()
-        fourteenArray.append(char)
+        charMap[markerArray[0]] = nil
+        markerArray.removeFirst()
+        markerArray.append(char)
         var charMap: [Character:Int] = [:]
-        if isUnique(charMap: &charMap, charArray: fourteenArray) {
-            print("Marker: \(charArrayToString(charArray: fourteenArray))")
+        if isUnique(charMap: &charMap, charArray: markerArray) {
+            print("Marker: \(charArrayToString(charArray: markerArray))")
             print(i + 1)
             return i + 1
         }
@@ -97,8 +66,10 @@ func main() {
     }
     
     // Code here
-    var _ = messageMarker4(dataStream: contents)
-    var _ = messageMarker14(dataStream: contents)
+    // var _ = messageMarker4(dataStream: contents)
+    // var _ = messageMarker14(dataStream: contents)
+    var _ = findMessageMarker(dataStream: contents, markCount: 4)
+    var _ = findMessageMarker(dataStream: contents, markCount: 14)
 }
 
 main()
